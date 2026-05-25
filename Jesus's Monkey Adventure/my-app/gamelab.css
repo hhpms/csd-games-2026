@@ -430,3 +430,16 @@
 #studio-space-button:focus {
   outline: 0;
 }
+/* --- Center Game on Page --- */
+body.web {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: #f4f7fb !important;
+}
+
+#sketch.web {
+  position: relative !important;
+}
