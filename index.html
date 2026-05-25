@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student JavaScript Games</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 40px;
+      color: #1f2937;
+    }
+
+    header {
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto 40px;
+    }
+
+    h1 {
+      color: #1e3a8a;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .game-card h2 {
+      font-size: 1.1rem;
+      margin: 0 0 14px;
+      color: #111827;
+    }
+
+    .game-card a {
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+      background: #1e3a8a;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .game-card a:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Student JavaScript Games</h1>
+    <p>
+      These JavaScript games were created by 7th and 8th grade students
+      for their Computer Science Discoveries class.
+    </p>
+  </header>
+
+  <main class="game-grid" id="gameGrid"></main>
+
+  <script>
+    const games = [
+      "Abed's Ocean Adventure",
+      "Aleeza's Camel Adventure",
+      "Andrew's Pizza Shop",
+      "Ayden's Coin Game",
+      "Blake's Pizza Dinosaur",
+      "Callen's Alien Showdown",
+      "Camryn's Healthy Choices",
+      "Dr. Donaldson's Jumping Example",
+      "Dr. Donaldson's XY Example",
+      "Duke's Emoji Adventure",
+      "Gabe's Electric Adventure",
+      "Gabriel's Emoji Tennis",
+      "Gideon's Safari",
+      "Grayson's Mystery Game",
+      "Gunnar's International Battle",
+      "Hailey's Vampire Adventure",
+      "Jacoby's Brain Rot Hard Mode",
+      "Jason's Sonic Game",
+      "Jeffrey's Knight Adventure",
+      "Jesus's Monkey Adventure",
+      "Joell's Cross the Road",
+      "Jordyn's Astronaut Adventure",
+      "Josue's Adventure Game.py",
+      "Kylie's Bunny Adventure",
+      "Liam's Speedy Game",
+      "Lindsay's Ocean Adventure",
+      "Lorelei's Snowflake Chaser",
+      "Merveille's Donut Chaser",
+      "Niyla's Bunny Adventure",
+      "Noah B's Eat the Chocolate",
+      "Noah Q's Bombardiro Crocodilo",
+      "Payton's Bear Beats Beets",
+      "Rene's Brain Rot Adventure",
+      "Zohan's Day in the Park"
+    ];
+
+    const grid = document.getElementById("gameGrid");
+
+    games.forEach(game => {
+      const card = document.createElement("div");
+      card.className = "game-card";
+
+      card.innerHTML = `
+        <h2>${game}</h2>
+        <a href="./${encodeURIComponent(game)}/my-app/index.html">Play Game</a>
+      `;
+
+      grid.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>
