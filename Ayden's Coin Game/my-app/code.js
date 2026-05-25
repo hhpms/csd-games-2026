@@ -70,9 +70,6 @@ window.preload = function () {
 // -----
 
 var points = 0;
-var STORY = createSprite(200, 320);
-STORY.setAnimation("gameplay_story");
-STORY.scale = 0.3;
 var HARD = createSprite(300, 100);
 HARD.setAnimation("gameplay_redstar_1");
 var EASY = createSprite(100, 100);
@@ -693,10 +690,7 @@ function draw() {
         EASY.visible = 1;
         HARD.scale = 0.3;
         EASY.scale = 0.3;
-        if (mouseIsOver(STORY)) {
-          background("black");
-          text("Story mode", 150, 240);
-        }
+        
         if (mouseIsOver(EASY)) {
           text("Normal mode", 150, 240);
         }
@@ -707,7 +701,7 @@ function draw() {
             START = 1;
             HARD.visible = 0;
             EASY.visible = 0;
-            STORY.visible = 0;
+            
           }
         }
         if (mousePressedOver(EASY)) {
@@ -715,15 +709,9 @@ function draw() {
           NORMAL = 1;
           HARD.visible = 0;
           EASY.visible = 0;
-          STORY.visible = 0;
+          
         }
-        if (mousePressedOver(STORY)) {
-          story = true;
-          START = 1;
-          HARD.visible = 0;
-          EASY.visible = 0;
-          STORY.visible = 0;
-        }
+        
         ghost.visible = 0;
         spike.visible = 0;
         coin.visible = 0;
@@ -731,12 +719,7 @@ function draw() {
       }
     }
   }
-  if (story == true) {
-    background("black");
-    var sec = World.seconds;
-    stopSound("assets/category_background/squeaking_machine.mp3");
-    playSound("assets/category_background/squeaking_machine.mp3", false);
-  }
+  
 
   }
 
