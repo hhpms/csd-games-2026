@@ -430,3 +430,31 @@
 #studio-space-button:focus {
   outline: 0;
 }
+/* Center Code.org Game Lab export */
+html,
+body.web {
+  width: 100vw !important;
+  height: 565px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: #f4f7fb !important;
+  position: relative !important;
+}
+
+#sketch.web {
+  position: absolute !important;
+  left: 50% !important;
+  top: 10px !important;
+  transform: translateX(-50%) !important;
+  width: 400px !important;
+}
+
+#studio-dpad-container {
+  position: absolute !important;
+  left: 50% !important;
+  top: 410px !important;
+  bottom: 5px !important;
+  transform: translateX(-50%) !important;
+  width: 400px !important;
+  background-color: purple;
+}
