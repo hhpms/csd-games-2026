@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josue's Adventure Game</title>
+  <style>
+    :root {
+      --bg: #111827;
+      --panel: #1f2937;
+      --panel-2: #0f172a;
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --accent: #38bdf8;
+      --accent-2: #a855f7;
+      --danger: #ef4444;
+      --button: #2563eb;
+      --button-hover: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.2), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.2), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .game-shell {
+      width: min(960px, 100%);
+      background: rgba(15, 23, 42, 0.92);
+      border: 4px solid #334155;
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 20px 24px;
+      border-bottom: 2px solid #334155;
+      background: linear-gradient(90deg, #0f172a, #1e1b4b);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) 1fr;
+      gap: 0;
+    }
+
+    .scene {
+      min-height: 430px;
+      background: #020617;
+      border-right: 2px solid #334155;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(#1e3a8a 0 48%, #14532d 48% 100%);
+    }
+
+    .dream .sky {
+      background: linear-gradient(#312e81 0 45%, #134e4a 45% 100%);
+    }
+
+    .factory .sky {
+      background: linear-gradient(#334155 0 45%, #1f2937 45% 100%);
+    }
+
+    .shadow-scene .sky {
+      background: linear-gradient(#111827 0 45%, #052e16 45% 100%);
+    }
+
+    .river {
+      position: absolute;
+      left: -30px;
+      bottom: 40px;
+      width: 520px;
+      height: 90px;
+      background: repeating-linear-gradient(
+        135deg,
+        #38bdf8 0 12px,
+        #0ea5e9 12px 24px
+      );
+      transform: rotate(-8deg);
+      opacity: 0.8;
+      display: none;
+    }
+
+    .dream .river,
+    .shadow-scene .river {
+      display: block;
+    }
+
+    .sun {
+      position: absolute;
+      top: 38px;
+      right: 42px;
+      width: 54px;
+      height: 54px;
+      background: #fde047;
+      box-shadow: 0 0 0 8px rgba(253, 224, 71, 0.25);
+    }
+
+    .moon {
+      position: absolute;
+      top: 38px;
+      right: 42px;
+      width: 54px;
+      height: 54px;
+      background: #e0e7ff;
+      box-shadow: 0 0 0 8px rgba(224, 231, 255, 0.2);
+      display: none;
+    }
+
+    .dream .sun,
+    .factory .sun,
+    .shadow-scene .sun {
+      display: none;
+    }
+
+    .dream .moon,
+    .shadow-scene .moon {
+      display: block;
+    }
+
+    .player {
+      position: absolute;
+      bottom: 92px;
+      left: 68px;
+      width: 36px;
+      height: 60px;
+      image-rendering: pixelated;
+    }
+
+    .player::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background: #fbbf24;
+      box-shadow:
+        0 20px 0 4px #2563eb,
+        0 42px 0 0 #111827,
+        18px 42px 0 0 #111827;
+    }
+
+    .mushroom {
+      position: absolute;
+      bottom: 88px;
+      right: 70px;
+      width: 80px;
+      height: 80px;
+      display: none;
+    }
+
+    .mushroom::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 0;
+      width: 60px;
+      height: 36px;
+      background: #dc2626;
+      box-shadow:
+        10px 8px 0 #fca5a5,
+        34px 12px 0 #fecaca;
+    }
+
+    .mushroom::after {
+      content: "";
+      position: absolute;
+      left: 28px;
+      top: 34px;
+      width: 24px;
+      height: 46px;
+      background: #fef3c7;
+    }
+
+    .dream .mushroom,
+    .shadow-scene .mushroom {
+      display: block;
+      transform: scale(1.7);
+      right: 96px;
+      bottom: 126px;
+    }
+
+    .small-mushroom {
+      position: absolute;
+      bottom: 92px;
+      left: 230px;
+      width: 30px;
+      height: 32px;
+      background: #fca5a5;
+      box-shadow:
+        8px -12px 0 8px #dc2626,
+        120px 8px 0 0 #fca5a5,
+        128px -4px 0 8px #ef4444;
+      display: none;
+    }
+
+    .walk .small-mushroom {
+      display: block;
+    }
+
+    .shadow {
+      position: absolute;
+      bottom: 92px;
+      right: 86px;
+      width: 42px;
+      height: 86px;
+      background: #020617;
+      box-shadow:
+        0 -20px 0 -4px #020617,
+        0 0 20px rgba(0,0,0,0.7);
+      display: none;
+      animation: glide 2.2s infinite alternate ease-in-out;
+    }
+
+    .walk .shadow,
+    .shadow-scene .shadow {
+      display: block;
+    }
+
+    .shadow-scene .shadow {
+      right: 165px;
+      transform: scale(1.35);
+    }
+
+    .door {
+      position: absolute;
+      bottom: 72px;
+      right: 90px;
+      width: 80px;
+      height: 150px;
+      background:
+        linear-gradient(90deg, #475569 0 12px, #64748b 12px 24px, #475569 24px 36px, #64748b 36px 100%);
+      border: 5px solid #1f2937;
+      display: none;
+    }
+
+    .door::after {
+      content: "";
+      position: absolute;
+      right: 10px;
+      top: 68px;
+      width: 8px;
+      height: 8px;
+      background: #facc15;
+    }
+
+    .door-scene .door,
+    .factory .door {
+      display: block;
+    }
+
+    .factory-belt {
+      position: absolute;
+      left: 20px;
+      bottom: 95px;
+      width: 380px;
+      height: 42px;
+      background: repeating-linear-gradient(
+        90deg,
+        #475569 0 20px,
+        #94a3b8 20px 40px
+      );
+      border: 4px solid #0f172a;
+      display: none;
+      animation: belt 1.1s infinite linear;
+    }
+
+    .factory .factory-belt {
+      display: block;
+    }
+
+    .spark {
+      position: absolute;
+      left: 280px;
+      top: 120px;
+      width: 18px;
+      height: 18px;
+      background: #facc15;
+      box-shadow:
+        20px 30px 0 #f97316,
+        -30px 40px 0 #facc15;
+      display: none;
+      animation: blink 0.7s infinite alternate;
+    }
+
+    .factory .spark {
+      display: block;
+    }
+
+    .text-panel {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 430px;
+      background: var(--panel);
+    }
+
+    .story-text {
+      flex: 1;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f8fafc;
+      white-space: pre-line;
+    }
+
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      background: var(--button);
+      cursor: pointer;
+      box-shadow: 0 6px 0 #1e40af;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #1e40af;
+    }
+
+    .restart {
+      background: var(--accent-2);
+      box-shadow: 0 6px 0 #6b21a8;
+    }
+
+    .source-section {
+      border-top: 2px solid #334155;
+      background: var(--panel-2);
+      padding: 16px 24px 24px;
+    }
+
+    details {
+      color: var(--muted);
+    }
+
+    summary {
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    pre {
+      overflow: auto;
+      max-height: 320px;
+      background: #020617;
+      color: #d1fae5;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .caption {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      text-align: center;
+      color: #e2e8f0;
+      font-size: 0.9rem;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    @keyframes glide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-20px); }
+    }
+
+    @keyframes blink {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+
+    @keyframes belt {
+      from { background-position: 0 0; }
+      to { background-position: 40px 0; }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 12px;
+      }
+
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .scene {
+        border-right: 0;
+        border-bottom: 2px solid #334155;
+        min-height: 310px;
+      }
+
+      .text-panel {
+        min-height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell">
+    <header>
+      <h1>Josue's Adventure Game</h1>
+      <p class="subtitle">A simple visual version of the original Python text adventure.</p>
+    </header>
+
+    <section class="game-layout">
+      <div id="scene" class="scene">
+        <div class="sky"></div>
+        <div class="sun"></div>
+        <div class="moon"></div>
+        <div class="river"></div>
+        <div class="small-mushroom"></div>
+        <div class="mushroom"></div>
+        <div class="door"></div>
+        <div class="factory-belt"></div>
+        <div class="spark"></div>
+        <div class="shadow"></div>
+        <div class="player"></div>
+        <div id="caption" class="caption">Home</div>
+      </div>
+
+      <div class="text-panel">
+        <div id="storyText" class="story-text"></div>
+        <div id="choices" class="choices"></div>
+      </div>
+    </section>
+
+    <section class="source-section">
+      <details>
+        <summary>Show original Python source</summary>
+        <p>This preserves the student's original Python story code while the game above uses JavaScript for the browser version.</p>
+        <pre><code>print(&quot;*...you wake up to the soothing sounds of birds outside*&quot;)
+print(&quot;player: oh i forgot i have x today.&quot;)
+print(&quot;*you go downstairs to see no one*&quot;)
+
+choice = input(&quot;Should I go outside? yes/no: &quot;).lower()
+
+if choice == &quot;yes&quot;:
+    print(&quot;*you go outside. you decide to take a walk to relax...*&quot;)
+    print(&quot;*you head to a bench and sit. you see something in the distance...*&quot;)
+    print(&quot;*you look a little closer and you see a small red mushroom that seems to have a large hole next to it... it looks like a burrow.*&quot;)
+    print(&quot;*you ignore it... you continue walking but something feels off. you pass by some more little mushrooms, although you have never seen any around where you live... you see no one and you see a man in the distance.*&quot;)
+    print(&quot;*you think nothing of it, although you&#x27;re a little startled...*&quot;)
+
+    choice = input(&quot;Do you want to approach the figure? yes/no: &quot;).lower()
+
+    if choice == &quot;yes&quot;:
+        print(&quot;*you walk to the figure. as you walk the man disappears. you finally decide that you&#x27;re not going to deal with this and you walk home*&quot;)
+    elif choice == &quot;no&quot;:
+        print(&quot;*you stay where you are...*&quot;)
+        print(&quot;*you see the man disappear and you get nervous for a second... you finally decide instead of being outside you could be sleeping, so you go home*&quot;)
+
+elif choice == &quot;no&quot;:
+    print(&quot;*you stay inside and head to the couch...*&quot;)
+
+print(&quot;*you eventually sit on your couch and begin to find a snack*&quot;)
+print(&quot;*you eat the snack and you feel tired... after all, you did wake up early...*&quot;)
+print(&quot;*you start to get tired, your eyes feel heavy and you fall asleep...*&quot;)
+print(&#x27;&quot;player: what. what the heck?! where am I?&quot;&#x27;)
+print(&quot;*you are next to a giant plastic looking mushroom. you&#x27;re also next to a river that reminds you of a lazy river*&quot;)
+print(&quot;*you hear the calming sound of trickling water, but you&#x27;re not calm... you think to yourself, &#x27;this has to be a dream. but it feels real.&#x27;*&quot;)
+
+print(&quot;*you hear a scream echo*&quot;)
+print(&quot;player: what was that?!&quot;)
+
+choice = input(&quot;Do you go to the sound? yes/no: &quot;).lower()
+
+if choice == &quot;yes&quot;:
+    print(&quot;*you sit there for a couple of seconds, but you decide to head to the sound. you walk slowly to the sound. as you pass the giant plastic looking mushrooms you can hear the slow sound of water streaming down the hill of fake grass.*&quot;)
+    print(&quot;*you walk for a while longer and you hear a heavy bang. it sounds like a metal slab hit the floor. it echoes, but you keep walking*&quot;)
+    print(&quot;*in the distance you see a great metal and rusty door that seems to have been there for years. you realize that the door is simply leading to nowhere; it&#x27;s just a door and if you were to look behind it you would see nothing...*&quot;)
+    print(&quot;*you walk a little closer to the door and you feel like opening it, but at the same time... you don&#x27;t have a good feeling about it...*&quot;)
+
+    choice = input(&quot;Do you open the door? yes/no: &quot;).lower()
+
+    if choice == &quot;yes&quot;:
+        print(&quot;*you open the door and you are hit with an industrial smell with the sounds of loud metal bangs and giant conveyor belts*&quot;)
+        print(&quot;*you see giant industrial shelves with tools on the floor, tall ladders, and sounds of stuff moving even though you don&#x27;t see anyone.*&quot;)
+
+    elif choice == &quot;no&quot;:
+        print(&quot;*you decide not to enter the door. you head to the field behind the door and you see another forest of fake plastic mushrooms*&quot;)
+        print(&quot;*you walk to the forest and you hear another screech. at this point you feel terrified to go anywhere, but to get out you must explore*&quot;)
+        print(&quot;*you walk for a while longer and see the strange shadow man once again. although you can see it clearly this time, you back up but the shadow isn&#x27;t disappearing like last time. instead he&#x27;s just standing there.*&quot;)
+        print(&quot;player: hello?&quot;)
+        print(&quot;???: hello&quot;)
+        print(&quot;*the figure approaches you fast. it&#x27;s not moving, it&#x27;s simply gliding to you.*&quot;)
+        print(&quot;*when the thing touches you, you wake up*&quot;)
+        print(&quot;*it was just a dream,*&quot;)
+        input(&quot;Error 404&quot;)
+
+elif choice == &quot;no&quot;:
+    print(&quot;*you decide not to follow the scream. you stay near the river, unsure of what to do next.*&quot;)
+</code></pre>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const storyText = document.getElementById("storyText");
+    const choices = document.getElementById("choices");
+    const scene = document.getElementById("scene");
+    const caption = document.getElementById("caption");
+
+    const scenes = {
+      start: {
+        className: "",
+        caption: "Home",
+        text: `*...you wake up to the soothing sounds of birds outside*
+
+player: oh i forgot i have x today.
+
+*you go downstairs to see no one*
+
+Should I go outside?`,
+        options: [
+          { label: "Yes, go outside", next: "outside" },
+          { label: "No, stay inside", next: "inside" }
+        ]
+      },
+      outside: {
+        className: "walk",
+        caption: "The strange walk",
+        text: `*You go outside. You decide to take a walk to relax...*
+
+*You head to a bench and sit. You see something in the distance.*
+
+*You look closer and see a small red mushroom with a large hole next to it. It looks like a burrow.*
+
+*You ignore it, but something feels off. More little mushrooms appear, even though you have never seen any around where you live. Then you see a man in the distance.*
+
+Do you want to approach the figure?`,
+        options: [
+          { label: "Approach the figure", next: "approach" },
+          { label: "Stay where you are", next: "stay" }
+        ]
+      },
+      approach: {
+        className: "walk",
+        caption: "The disappearing man",
+        text: `*You walk toward the figure.*
+
+*As you get closer, the man disappears.*
+
+*You finally decide that you are not going to deal with this, so you walk home.*`,
+        options: [
+          { label: "Continue", next: "couch" }
+        ]
+      },
+      stay: {
+        className: "walk",
+        caption: "Something feels wrong",
+        text: `*You stay where you are.*
+
+*You see the man disappear and get nervous for a second.*
+
+*You finally decide that instead of being outside, you could be sleeping, so you go home.*`,
+        options: [
+          { label: "Continue", next: "couch" }
+        ]
+      },
+      inside: {
+        className: "",
+        caption: "Inside the house",
+        text: `*You stay inside and head to the couch.*`,
+        options: [
+          { label: "Find a snack", next: "couch" }
+        ]
+      },
+      couch: {
+        className: "",
+        caption: "Falling asleep",
+        text: `*You eventually sit on your couch and begin to find a snack.*
+
+*You eat the snack and feel tired. After all, you did wake up early.*
+
+*Your eyes feel heavy and you fall asleep...*`,
+        options: [
+          { label: "Wake up?", next: "dream" }
+        ]
+      },
+      dream: {
+        className: "dream",
+        caption: "The mushroom dream world",
+        text: `"player: what. what the heck?! where am I?"
+
+*You are next to a giant plastic-looking mushroom. You're also next to a river that reminds you of a lazy river.*
+
+*You hear the calming sound of trickling water, but you're not calm.*
+
+You think: "This has to be a dream. But it feels real."
+
+*You hear a scream echo.*
+
+player: what was that?!
+
+Do you go to the sound?`,
+        options: [
+          { label: "Go to the sound", next: "door" },
+          { label: "Stay near the river", next: "river" }
+        ]
+      },
+      door: {
+        className: "dream door-scene",
+        caption: "The rusty door",
+        text: `*You head toward the sound.*
+
+*As you pass the giant plastic mushrooms, you hear water streaming down the hill of fake grass.*
+
+*After walking for a while, you hear a heavy bang. It sounds like a metal slab hit the floor. It echoes, but you keep walking.*
+
+*In the distance, you see a great rusty metal door. It seems to lead nowhere.*
+
+Do you open the door?`,
+        options: [
+          { label: "Open the door", next: "factory" },
+          { label: "Do not open it", next: "forest" }
+        ]
+      },
+      factory: {
+        className: "factory",
+        caption: "The industrial room",
+        text: `*You open the door.*
+
+*You are hit with an industrial smell and the sounds of loud metal bangs and giant conveyor belts.*
+
+*You see giant industrial shelves, tools on the floor, tall ladders, and sounds of things moving even though you don't see anyone.*
+
+The adventure ends here... for now.`,
+        options: [
+          { label: "Restart", next: "start", restart: true }
+        ]
+      },
+      forest: {
+        className: "shadow-scene",
+        caption: "The shadow figure",
+        text: `*You decide not to enter the door.*
+
+*You head to the field behind the door and see another forest of fake plastic mushrooms.*
+
+*You hear another screech. At this point, you feel terrified to go anywhere, but to get out, you must explore.*
+
+*You walk for a while longer and see the strange shadow man again. This time, you can see him clearly.*
+
+player: hello?
+
+???: hello
+
+*The figure approaches you fast. It is not walking. It is simply gliding toward you.*
+
+*When the thing touches you, you wake up.*
+
+*It was just a dream.*
+
+Error 404`,
+        options: [
+          { label: "Restart", next: "start", restart: true }
+        ]
+      },
+      river: {
+        className: "dream",
+        caption: "The river",
+        text: `*You decide not to follow the scream.*
+
+*You stay near the river, unsure of what to do next.*
+
+The dream world stays quiet... maybe too quiet.`,
+        options: [
+          { label: "Restart", next: "start", restart: true }
+        ]
+      }
+    };
+
+    function renderScene(key) {
+      const current = scenes[key];
+      scene.className = "scene " + current.className;
+      caption.textContent = current.caption;
+      storyText.textContent = current.text;
+      choices.innerHTML = "";
+
+      current.options.forEach(option => {
+        const button = document.createElement("button");
+        button.textContent = option.label;
+        if (option.restart) {
+          button.classList.add("restart");
+        }
+        button.addEventListener("click", () => renderScene(option.next));
+        choices.appendChild(button);
+      });
+    }
+
+    renderScene("start");
+  </script>
+</body>
+</html>
