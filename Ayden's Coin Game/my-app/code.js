@@ -1,4 +1,37 @@
 
+// Simple replacement for Code.org sound on GitHub Pages
+var __sounds = {};
+
+function playSound(url, loop) {
+  try {
+    if (!__sounds[url]) {
+      __sounds[url] = new Audio(url);
+    }
+    __sounds[url].loop = !!loop;
+    __sounds[url].currentTime = 0;
+    __sounds[url].play().catch(function(){});
+  } catch (e) {
+    console.log("Sound error:", url, e);
+  }
+}
+
+function stopSound(url) {
+  try {
+    if (url && __sounds[url]) {
+      __sounds[url].pause();
+      __sounds[url].currentTime = 0;
+    } else {
+      Object.keys(__sounds).forEach(function(key) {
+        __sounds[key].pause();
+        __sounds[key].currentTime = 0;
+      });
+    }
+  } catch (e) {
+    console.log("Stop sound error:", url, e);
+  }
+}
+
+
 
 var p5Inst = new p5(null, 'sketch');
 
